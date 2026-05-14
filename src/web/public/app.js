@@ -226,19 +226,19 @@ function renderModalContent(data) {
       </div>
       <div class="feat-card">
         <div class="feat-label">OI Change (1h)</div>
-        <div class="feat-val">${fmt(f.oi_change_1h * 100, 2)}%</div>
+        <div class="feat-val">${fmt(f.oi_change_1h, 2)}%</div>
       </div>
       <div class="feat-card">
         <div class="feat-label">Funding Rate</div>
-        <div class="feat-val">${fmt(f.funding_rate * 100, 4)}%</div>
+        <div class="feat-val">${fmt((f.funding_rate ?? 0) * 100, 4)}%</div>
       </div>
       <div class="feat-card">
         <div class="feat-label">BB Width (1h)</div>
-        <div class="feat-val">${fmt(f.bbw_1h * 100, 2)}%</div>
+        <div class="feat-val">${fmt(f.bbw, 2)}%</div>
       </div>
       <div class="feat-card">
         <div class="feat-label">Extensión MA20</div>
-        <div class="feat-val">${fmt(f.price_extension_pct, 2)}%</div>
+        <div class="feat-val">${fmt(f.price_extension, 2)}%</div>
       </div>
       <div class="feat-card">
         <div class="feat-label">High 24h</div>

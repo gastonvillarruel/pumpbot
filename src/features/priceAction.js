@@ -141,6 +141,12 @@ export function computePriceActionFeatures(symbol) {
     if (range > 0) upperWickPct = (last.high - last.close) / range;
   }
 
+  let high24h = null;
+  if (candles1h.length > 0) {
+    const slice24 = candles1h.slice(-Math.min(24, candles1h.length));
+    high24h = Math.max(...slice24.map(c => c.high));
+  }
+
   return {
     price_return_5m: priceReturn5m,
     price_return_1h: priceReturn1h,
@@ -152,6 +158,7 @@ export function computePriceActionFeatures(symbol) {
     lateral_range_24h: lateralRange24h,
     lateral_range_8h: lateralRange8h,
     upper_wick_pct: upperWickPct,
+    high_24h: high24h,
     ...breakouts,
   };
 }
