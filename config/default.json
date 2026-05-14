@@ -2,7 +2,7 @@
   "exchange": {
     "name": "binance_futures",
     "baseUrl": "https://fapi.binance.com",
-    "rateLimitPerMinute": 1200,
+    "rateLimitPerMinute": 2400,
     "requestTimeout": 10000,
     "retryAttempts": 3,
     "retryDelayMs": 1000
