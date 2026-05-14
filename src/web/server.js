@@ -66,6 +66,26 @@ export function startWebServer(cfg, mode) {
     res.json(states);
   });
 
+  // API: detalle de un símbolo específico
+  app.get('/api/symbol/:symbol', async (req, res) => {
+    const { symbol } = req.params;
+    const { getSymbolState } = await import('../storage/states.js');
+    const { getLatestFeatures } = await import('../storage/features.js');
+    
+    const state = getSymbolState(symbol);
+    const featuresData = getLatestFeatures(symbol);
+    
+    if (!state && !featuresData) {
+      return res.status(404).json({ error: 'Símbolo no encontrado' });
+    }
+    
+    res.json({
+      symbol,
+      state: state || { current_state: 'NORMAL' },
+      details: featuresData
+    });
+  });
+
   // API: alertas recientes
   app.get('/api/alerts', (req, res) => {
     res.json(getRecentAlerts(50));
