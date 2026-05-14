@@ -110,7 +110,6 @@ async function runCycle() {
       const batch = universeSymbols.slice(i, i + BATCH);
       await Promise.allSettled(batch.map(sym => scanner.scanSymbol(sym)));
     }
-    scanner.markSlowScanDone();
 
     // Features + Scoring + State para cada símbolo
     // Refresh tickers para tener precio actual
@@ -179,9 +178,16 @@ async function main() {
   await refreshUniverse().catch(err => log.warn({ err: err.message }, 'Falló primer refresh'));
 
   log.info({ interval: cfg.scanner.scanIntervalMs }, 'Bot iniciado. Comenzando ciclos...');
-  await runCycle();
 
-  setInterval(runCycle, cfg.scanner.scanIntervalMs);
+  async function loop() {
+    const start = nowMs();
+    await runCycle();
+    const elapsed = nowMs() - start;
+    const waitMs = Math.max(0, cfg.scanner.scanIntervalMs - elapsed);
+    setTimeout(loop, waitMs);
+  }
+
+  loop();
 }
 
 main().catch(err => {

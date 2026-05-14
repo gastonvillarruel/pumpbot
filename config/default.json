@@ -18,7 +18,7 @@
   },
 
   "universe": {
-    "minVolume24hUsdt": 1500000,
+    "minVolume24hUsdt": 3000000,
     "maxVolume24hUsdt": null,
     "excludeStablecoins": true,
     "blacklist": ["ETHUSDT"],
