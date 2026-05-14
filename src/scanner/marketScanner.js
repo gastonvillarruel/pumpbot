@@ -92,6 +92,4 @@ export class MarketScanner {
       log.warn({ symbol, err: err.message }, 'Error escaneando símbolo');
     }
   }
-
-  }
 }
