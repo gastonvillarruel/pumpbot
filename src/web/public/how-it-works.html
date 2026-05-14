@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUMP-BOT — Funcionamiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="docs-body">
+  <header class="docs-header">
+    <a href="index.html" style="color: var(--muted); text-decoration: none; font-size: 14px;">← Volver al Dashboard</a>
+    <h1 style="margin-top: 20px;">Cómo funciona PUMP-BOT</h1>
+    <p style="color: var(--muted);">Guía técnica sobre la lógica de detección, scoring y estados del bot.</p>
+  </header>
+
+  <section class="docs-section">
+    <h2>1. Arquitectura del Radar</h2>
+    <p>El bot opera en ciclos continuos (actualmente cada <strong>60s</strong>), escaneando el universo de contratos de Binance Futures para detectar anomalías antes de que el movimiento sea masivo.</p>
+    <div class="docs-grid">
+      <div class="docs-card">
+        <h3>Filtro de Universo</h3>
+        <p>Solo analiza monedas con volumen 24h > <strong>$3.0M</strong>. Excluye stablecoins y símbolos en blacklist (como ETHUSDT).</p>
+      </div>
+      <div class="docs-card">
+        <h3>Captura de Datos</h3>
+        <p>Obtiene en tiempo real: Precio, Volumen (5m, 1h), Open Interest (OI), Funding Rate y Liquidados.</p>
+      </div>
+      <div class="docs-card">
+        <h3>Detección Temprana</h3>
+        <p>Busca "Acumulación Silenciosa": subida de OI con precio lateral y bajo volumen relativo (RVOL).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-section">
+    <h2>2. Sistema de Scoring (0-100)</h2>
+    <p>Cada símbolo recibe un score basado en pesos configurables. Un score > 80 suele indicar una ignición inminente.</p>
+    <div class="docs-grid">
+      <div class="docs-card">
+        <h3>Acumulación (30%)</h3>
+        <p>Basado en crecimiento de OI y divergencia OI-Precio. Es la señal más fuerte de "Smart Money" entrando.</p>
+        <div class="weight-bar"><div class="weight-fill" style="width: 30%"></div></div>
+      </div>
+      <div class="docs-card">
+        <h3>Volumen (25%)</h3>
+        <p>Anomalías de RVOL 5m y Z-Score de volumen 1h. Busca picos que rompan la media histórica.</p>
+        <div class="weight-bar"><div class="weight-fill" style="width: 25%"></div></div>
+      </div>
+      <div class="docs-card">
+        <h3>Price Action (25%)</h3>
+        <p>Compresión de Bandas de Bollinger, rangos laterales y breakouts de máximos de 24h.</p>
+        <div class="weight-bar"><div class="weight-fill" style="width: 25%"></div></div>
+      </div>
+      <div class="docs-card">
+        <h3>Derivados (15%)</h3>
+        <p>Análisis del Funding Rate. Funding negativo en subida indica Short Squeeze potencial.</p>
+        <div class="weight-bar"><div class="weight-fill" style="width: 15%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-section">
+    <h2>3. Máquina de Estados</h2>
+    <p>Los símbolos transicionan por estados según su score y confirmaciones adicionales para evitar falsos positivos.</p>
+    <div class="param-table">
+      <table>
+        <tr>
+          <td><strong>WATCH</strong></td>
+          <td>Score > 40 + Señal de volumen/OI. Entrada al radar.</td>
+        </tr>
+        <tr>
+          <td><strong>PRE_PUMP</strong></td>
+          <td>Score > 70 + Mínimo 2 señales activas. Alta probabilidad.</td>
+        </tr>
+        <tr>
+          <td><strong>IGNITION</strong></td>
+          <td>Score > 80 + Breakout de 24h. El movimiento ha comenzado.</td>
+        </tr>
+        <tr>
+          <td><strong>LATE_DANGER</strong></td>
+          <td>Sobre-extensión (>25%), Funding extremo o mecha superior gigante. Peligro de reversión.</td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section">
+    <h2>4. Parámetros Actuales (Config)</h2>
+    <div class="docs-grid">
+      <div class="docs-card">
+        <h3>Umbrales de Alerta</h3>
+        <table class="param-table">
+          <tr><td>Min Score Watch</td><td>40</td></tr>
+          <tr><td>Min Score Pre-Pump</td><td>70</td></tr>
+          <tr><td>Min Score Ignition</td><td>80</td></tr>
+          <tr><td>Max Alertas/Hora</td><td>15</td></tr>
+        </table>
+      </div>
+      <div class="docs-card">
+        <h3>Filtros de Riesgo</h3>
+        <table class="param-table">
+          <tr><td>Min Vol 24h</td><td>$3.0M</td></tr>
+          <tr><td>Price Ext Max</td><td>30%</td></tr>
+          <tr><td>BTC Override</td><td>-3% (Pausa escalada)</td></tr>
+          <tr><td>Cooldown Post-Pump</td><td>120 min</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-section">
+    <h2>5. Lógica de Penalizaciones</h2>
+    <p>El score se reduce agresivamente si se detectan condiciones de riesgo:</p>
+    <ul style="padding-left: 20px; color: var(--muted); font-size: 13px;">
+      <li><strong>Precio Extendido:</strong> -10 a -25 puntos si ya subió demasiado rápido.</li>
+      <li><strong>Funding Eufórico:</strong> -10 a -20 puntos si el retail está muy apalancado en long.</li>
+      <li><strong>Bajo Volumen:</strong> -5 a -10 puntos para evitar pumps "ilíquidos" fáciles de manipular.</li>
+      <li><strong>BTC en contra:</strong> Penaliza si Bitcoin está cayendo con fuerza.</li>
+    </ul>
+  </section>
+
+  <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; text-align: center;">
+    PUMP-BOT — Powered by Advanced Market Analysis Engine
+  </footer>
+</body>
+</html>
