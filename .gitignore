@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.log
+data/logs/
+config/production.json
+*.local.json

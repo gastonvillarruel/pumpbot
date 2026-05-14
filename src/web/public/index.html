@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUMP-BOT — Status</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">📡 PUMP-BOT</div>
+      <div id="status-bar" class="status-bar">
+        <span id="mode-badge" class="badge">SHADOW</span>
+        <span id="api-health" class="health-ok">API: OK</span>
+        <span id="cycle-info">Ciclo #0</span>
+        <span id="uptime">Uptime: --</span>
+        <span id="sse-dot" class="sse-dot disconnected" title="SSE Connection"></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Símbolos Escaneados</div>
+        <div id="stat-symbols" class="stat-value">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En WATCH</div>
+        <div id="stat-watch" class="stat-value watch">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En PRE-PUMP</div>
+        <div id="stat-prepump" class="stat-value prepump">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En IGNITION</div>
+        <div id="stat-ignition" class="stat-value ignition">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Duración Ciclo</div>
+        <div id="stat-cycle-ms" class="stat-value">--</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <input id="search" type="text" placeholder="Buscar símbolo..." autocomplete="off">
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="ALL">Todos</button>
+        <button class="filter-btn" data-filter="WATCH">WATCH</button>
+        <button class="filter-btn" data-filter="PRE_PUMP">PRE-PUMP</button>
+        <button class="filter-btn" data-filter="IGNITION">IGNITION</button>
+      </div>
+    </div>
+
+    <!-- Symbols table -->
+    <div class="table-wrapper">
+      <table id="symbols-table">
+        <thead>
+          <tr>
+            <th data-sort="symbol">Símbolo</th>
+            <th data-sort="current_state">Estado</th>
+            <th data-sort="last_score">Score</th>
+            <th>RVOL 5m</th>
+            <th>OI Chg 1h</th>
+            <th>Funding</th>
+            <th>Ret 1h</th>
+            <th>Desde</th>
+          </tr>
+        </thead>
+        <tbody id="symbols-body">
+          <tr><td colspan="8" class="loading">Conectando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Alerts timeline -->
+    <div class="section-title">📋 Alertas Recientes</div>
+    <div id="alerts-list" class="alerts-list">
+      <div class="loading">Sin alertas aún</div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
